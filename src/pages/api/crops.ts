@@ -1,5 +1,31 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+/**
+ * Sample request:
+ * 
+ {
+    "coordinates": [
+        {
+            "lat": "0.032552",
+            "lon": "37.676013",
+            "loc": "0"
+        }
+    ]
+}
+
+{
+    "coordinates": [
+        {
+            "lat": "0.032552",
+            "lon": "37.676013",
+            "loc": "0"
+        }
+    ],
+    "cookie": "Cm92jt2ZYl1xYiCcgpMQ3mnvFZLOhzbC"
+}
+ */
+
+
 interface Coordinate {
 	lat: string,
 	lon: string,
@@ -21,6 +47,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			const successful: {location: Coordinate; data: any}[] = [];
 			const failed: (Coordinate & {error: string})[] = [];
 			const processed: Coordinate[] = [];
+			const cookiePref = "csrftoken=";
+			let defaultCookie = `${cookiePref}GA1.1.1976615837.1741062447`;
 
 			if (!Array.isArray(coordinates)) {
 				return res.status(400).json({
@@ -29,24 +57,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				});
 			}
 			if (!cookie) {
-				return res.status(400).json({ error: "Invalid input for cookie. 'cookie' must be a string and not empty", received: cookie });
+				console.warn("No cookie given, defaulting to default")
+				// return res.status(400).json({ error: "Invalid input for cookie. 'cookie' must be a string and not empty", received: cookie });
+			}else{
+				defaultCookie = `${cookiePref}${cookie}`
 			}
 
 			const headers = {
 				"Content-Type": "application/json",
 				Origin: "https://selector.kalro.org",
-				Cookie: "csrftoken=GA1.1.1976615837.1741062447",
+				Cookie: defaultCookie,
 			};
 
 			const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 			
 			for (const coord of coordinates) {
 				await sleep	(300)
-
+				console.log("Coord: ", coord)
 				const { lat, lon, loc } = coord;
 				if (typeof lat !== "string" || typeof lon !== "string") {
-					failed.push({ ...coord, error: "Invalid latitude or longitude formate" });
+					failed.push({ ...coord, error: "Invalid latitude or longitude format" });
 					// processed.push(coord);
+					console.error(`Invalid lat: ${lat} or invalid lon: ${lon}`)
 					continue;
 				}
 
