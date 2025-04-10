@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 	try {
 		console.log("Data fed to Gradio: ", req.body);
 		const client = await Client.connect("mark-kithinji/meadowai-crop-predictor");
-		const result = await client.predict("/predict", { input_json_str: JSON.stringify(req.body) }0);
+		const result = await client.predict("/predict", { input_json_str: JSON.stringify(req.body) });
 		res.status(200).json(result);
 		
 	} catch (error) {

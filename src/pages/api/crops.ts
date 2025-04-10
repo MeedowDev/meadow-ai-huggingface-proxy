@@ -25,27 +25,24 @@ import { NextApiRequest, NextApiResponse } from "next";
 }
  */
 
-
 interface Coordinate {
-	lat: string,
-	lon: string,
-	loc?: string
+	lat: string;
+	lon: string;
+	loc?: string;
 }
 
 interface RequestBody {
-	coordinates: Coordinate[],
-	cookie: string
+	coordinates: Coordinate[];
+	cookie: string;
 }
-
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 	if (req.method === "POST") {
 		try {
 			const { coordinates, cookie } = req.body as RequestBody;
 
-			const successful: {location: Coordinate; data: any}[] = [];
-			const failed: (Coordinate & {error: string})[] = [];
+			const successful: { location: Coordinate; data: { data: []; message: [] } }[] = [];
+			const failed: (Coordinate & { error: string })[] = [];
 			const processed: Coordinate[] = [];
 			const cookiePref = "csrftoken=";
 			let defaultCookie = `${cookiePref}GA1.1.1976615837.1741062447`;
@@ -57,10 +54,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				});
 			}
 			if (!cookie) {
-				console.warn("No cookie given, defaulting to default")
+				console.warn("No cookie given, defaulting to default");
 				// return res.status(400).json({ error: "Invalid input for cookie. 'cookie' must be a string and not empty", received: cookie });
-			}else{
-				defaultCookie = `${cookiePref}${cookie}`
+			} else {
+				defaultCookie = `${cookiePref}${cookie}`;
 			}
 
 			const headers = {
@@ -69,16 +66,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 				Cookie: defaultCookie,
 			};
 
-			const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-			
+			const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 			for (const coord of coordinates) {
-				await sleep	(300)
-				console.log("Coord: ", coord)
+				await sleep(300);
+				console.log("Coord: ", coord);
 				const { lat, lon, loc } = coord;
 				if (typeof lat !== "string" || typeof lon !== "string") {
 					failed.push({ ...coord, error: "Invalid latitude or longitude format" });
 					// processed.push(coord);
-					console.error(`Invalid lat: ${lat} or invalid lon: ${lon}`)
+					console.error(`Invalid lat: ${lat} or invalid lon: ${lon}`);
 					continue;
 				}
 
@@ -111,14 +108,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 					}
 
 					const data = await response.json();
-					console.log(data)
+					console.log(data);
 					// successful[`${lat},${lon}`] = data;
-					// const datum = 
+					// const datum =
 
 					successful.push({
 						location: payload,
-						data: data.data
-					})
+						data: data.data,
+					});
 				} catch (err) {
 					failed.push({ ...coord, error: err.message });
 				}
