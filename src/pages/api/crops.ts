@@ -117,7 +117,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 						data: data.data,
 					});
 				} catch (err) {
-					failed.push({ ...coord, error: err.message });
+					const error = err as Error
+					failed.push({ ...coord, error: error.message });
 				}
 			}
 
