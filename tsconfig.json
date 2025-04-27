@@ -17,6 +17,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/api/gradio.js", "src/pages/api/groqapi.js", "src/pages/api/pfeapi.js", "src/pages/api/ping.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/api/gradio.js", "src/pages/api/groqapi.js", "src/pages/api/pfeapi.js", "src/pages/api/ping.js"],
   "exclude": ["node_modules"]
 }
